@@ -1,22 +1,23 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro"
 ---
 
 <Layout title="Welcome to Astro.">
-	<canvas>
-
-	</canvas>
+	<div class="canvas-container">
+		<canvas> </canvas>
+	</div>
 </Layout>
 
 <script>
 	import { collisions } from "../utils/collisions"
+	import confetti from "canvas-confetti"
 	const canvas = document.querySelector("canvas")
 	const c = canvas.getContext("2d")
 
 	canvas.width = 1024
 	canvas.height = 576
-	
-	c.fillStyle = "white"
+
+	c.fillStyle = "rgb(91, 255, 255)"
 	c.fillRect(0, 0, canvas.width, canvas.height)
 
 	const collisionsMap = []
@@ -26,23 +27,25 @@ import Layout from '../layouts/Layout.astro';
 
 	interface BoundaryProps {
 		position: { x: number; y: number }
+		width?: number
+		height?: number
 	}
 
 	class Boundary {
-		position: BoundaryProps['position']
+		position: BoundaryProps["position"]
 		width: number
 		height: number
 
 		static width = 48
 		static height = 48
 
-		constructor({ position}: BoundaryProps) {
+		constructor({ position, width = 48, height = 48 }: BoundaryProps) {
 			this.position = position
-			this.width = 48
-			this.height = 48
+			this.width = width
+			this.height = height
 		}
 
-		draw () {
+		draw() {
 			c.fillStyle = "rgba(255, 0, 0, 0)"
 			c.fillRect(this.position.x, this.position.y, this.width, this.height)
 		}
@@ -58,10 +61,14 @@ import Layout from '../layouts/Layout.astro';
 	collisionsMap.forEach((row, i) => {
 		row.forEach((symbol, j) => {
 			if (symbol === 1025) {
-				boundaries.push(new Boundary({ position: {
-					x: j * Boundary.width + offset.x,
-					y: i * Boundary.height + offset.y
-				}}))
+				boundaries.push(
+					new Boundary({
+						position: {
+							x: j * Boundary.width + offset.x,
+							y: i * Boundary.height + offset.y,
+						},
+					})
+				)
 			}
 		})
 	})
@@ -74,7 +81,7 @@ import Layout from '../layouts/Layout.astro';
 
 	const playerUpImage = new Image()
 	playerUpImage.src = "src/assets/img/playerUp.png"
-	
+
 	const playerLeftImage = new Image()
 	playerLeftImage.src = "src/assets/img/playerLeft.png"
 
@@ -83,7 +90,7 @@ import Layout from '../layouts/Layout.astro';
 
 	const foregroundImage = new Image()
 	foregroundImage.src = "src/assets/img/forground_one.png"
-	
+
 	const foregroundTwoImage = new Image()
 	foregroundTwoImage.src = "src/assets/img/foreground_two.png"
 
@@ -91,13 +98,13 @@ import Layout from '../layouts/Layout.astro';
 		position: { x: number; y: number }
 		velocity?: number
 		image: HTMLImageElement
-		frames?: { max: number, val?: number, elapsed?: number }
+		frames?: { max: number; val?: number; elapsed?: number }
 		width?: number
 		height?: number
 		sprites?: {
 			up: HTMLImageElement
-			left: HTMLImageElement,
-			right: HTMLImageElement,
+			left: HTMLImageElement
+			right: HTMLImageElement
 			down: HTMLImageElement
 		}
 	}
@@ -112,12 +119,18 @@ import Layout from '../layouts/Layout.astro';
 		moving: boolean
 		sprites: SpriteProps["sprites"]
 
-		constructor({position, velocity, image, frames = { max: 1 }, sprites}: SpriteProps) {
+		constructor({
+			position,
+			velocity,
+			image,
+			frames = { max: 1 },
+			sprites,
+		}: SpriteProps) {
 			this.position = position
 			this.velocity = velocity
 			this.image = image
-			this.frames = {...frames, val: 0, elapsed: 0}
-			this.image.onload = () => {		
+			this.frames = { ...frames, val: 0, elapsed: 0 }
+			this.image.onload = () => {
 				this.width = this.image.width / this.frames.max
 				this.height = this.image.height
 			}
@@ -137,7 +150,7 @@ import Layout from '../layouts/Layout.astro';
 				this.image.width / this.frames.max,
 				this.image.height
 			)
-			
+
 			if (!this.moving) return
 
 			if (this.frames.max > 1) {
@@ -148,71 +161,84 @@ import Layout from '../layouts/Layout.astro';
 				if (this.frames.val < this.frames.max - 1) this.frames.val++
 				else this.frames.val = 0
 			}
-
 		}
 	}
 
 	const player = new Sprite({
 		position: {
-			x: canvas.width / 2 - (192 / 4) / 2,
-			y: canvas.height / 2 - 68 / 2
+			x: canvas.width / 2 - 192 / 4 / 2,
+			y: canvas.height / 2 - 68 / 2,
 		},
 		image: playerDownImage,
 		frames: {
-			max: 4
+			max: 4,
 		},
 		sprites: {
 			up: playerUpImage,
 			left: playerLeftImage,
 			right: playerRightImage,
-			down: playerDownImage
-		}
+			down: playerDownImage,
+		},
 	})
 
-	const background = new Sprite({ 
+	const background = new Sprite({
 		position: {
 			x: offset.x,
 			y: offset.y,
 		},
 		velocity: 1,
-		image: image
+		image: image,
 	})
 
-	const foreground = new Sprite({ 
+	const foreground = new Sprite({
 		position: {
 			x: offset.x,
 			y: offset.y,
 		},
 		velocity: 1,
-		image: foregroundImage
+		image: foregroundImage,
 	})
 
-	const foregroundTwo = new Sprite({ 
+	const foregroundTwo = new Sprite({
 		position: {
 			x: offset.x,
 			y: offset.y,
 		},
 		velocity: 1,
-		image: foregroundTwoImage
+		image: foregroundTwoImage,
+	})
+
+	const textBoundary = new Boundary({
+		position: {
+			x: 118,
+			y: 520,
+		},
+		height: 162,
+		width: 384,
 	})
 
 	const keys = {
 		w: {
-			pressed: false
+			pressed: false,
 		},
 		a: {
-			pressed: false
+			pressed: false,
 		},
 		s: {
-			pressed: false
+			pressed: false,
 		},
 		d: {
-			pressed: false
+			pressed: false,
 		},
 	}
 
-
-	const movables = [background, ...boundaries, foreground, foregroundTwo]
+	const movables = [
+		background,
+		...boundaries,
+		foreground,
+		foregroundTwo,
+		textBoundary,
+	]
 
 	const rectangularCollision = ({ rectangle1, rectangle2 }) => {
 		return (
@@ -223,15 +249,18 @@ import Layout from '../layouts/Layout.astro';
 		)
 	}
 
+	let confettiLaunched = false
+
 	const animate = () => {
 		window.requestAnimationFrame(animate)
 		background.draw()
-		boundaries.forEach(boundary => {
+		boundaries.forEach((boundary) => {
 			boundary.draw()
 		})
 		player.draw()
 		foreground.draw()
 		foregroundTwo.draw()
+		textBoundary.draw()
 
 		let moving = true
 		player.moving = false
@@ -243,10 +272,13 @@ import Layout from '../layouts/Layout.astro';
 				if (
 					rectangularCollision({
 						rectangle1: player,
-						rectangle2: {...boundary, position: {
-							x: boundary.position.x,
-							y: boundary.position.y + 3
-						}}
+						rectangle2: {
+							...boundary,
+							position: {
+								x: boundary.position.x,
+								y: boundary.position.y + 3,
+							},
+						},
 					})
 				) {
 					console.log("colliding")
@@ -256,11 +288,10 @@ import Layout from '../layouts/Layout.astro';
 			}
 
 			if (moving)
-			movables.forEach(movable => { 
-				movable.position.y += 3
-			})
-		}
-		else if (keys.a.pressed && lastKey === "a") {
+				movables.forEach((movable) => {
+					movable.position.y += 3
+				})
+		} else if (keys.a.pressed && lastKey === "a") {
 			player.moving = true
 			player.image = player.sprites.left
 			for (let i = 0; i < boundaries.length; i++) {
@@ -268,10 +299,13 @@ import Layout from '../layouts/Layout.astro';
 				if (
 					rectangularCollision({
 						rectangle1: player,
-						rectangle2: {...boundary, position: {
-							x: boundary.position.x + 3,
-							y: boundary.position.y
-						}}
+						rectangle2: {
+							...boundary,
+							position: {
+								x: boundary.position.x + 3,
+								y: boundary.position.y,
+							},
+						},
 					})
 				) {
 					console.log("colliding")
@@ -281,11 +315,10 @@ import Layout from '../layouts/Layout.astro';
 			}
 
 			if (moving)
-			movables.forEach(movable => { 
-				movable.position.x += 3
-			})
-		}
-		else if (keys.s.pressed && lastKey === "s") {
+				movables.forEach((movable) => {
+					movable.position.x += 3
+				})
+		} else if (keys.s.pressed && lastKey === "s") {
 			player.moving = true
 			player.image = player.sprites.down
 			for (let i = 0; i < boundaries.length; i++) {
@@ -293,10 +326,13 @@ import Layout from '../layouts/Layout.astro';
 				if (
 					rectangularCollision({
 						rectangle1: player,
-						rectangle2: {...boundary, position: {
-							x: boundary.position.x,
-							y: boundary.position.y - 3
-						}}
+						rectangle2: {
+							...boundary,
+							position: {
+								x: boundary.position.x,
+								y: boundary.position.y - 3,
+							},
+						},
 					})
 				) {
 					console.log("colliding")
@@ -306,11 +342,10 @@ import Layout from '../layouts/Layout.astro';
 			}
 
 			if (moving)
-			movables.forEach(movable => { 
-				movable.position.y -= 3
-			})
-		}
-		else if (keys.d.pressed && lastKey === "d") {
+				movables.forEach((movable) => {
+					movable.position.y -= 3
+				})
+		} else if (keys.d.pressed && lastKey === "d") {
 			player.moving = true
 			player.image = player.sprites.right
 			for (let i = 0; i < boundaries.length; i++) {
@@ -318,10 +353,13 @@ import Layout from '../layouts/Layout.astro';
 				if (
 					rectangularCollision({
 						rectangle1: player,
-						rectangle2: {...boundary, position: {
-							x: boundary.position.x - 3,
-							y: boundary.position.y
-						}}
+						rectangle2: {
+							...boundary,
+							position: {
+								x: boundary.position.x - 3,
+								y: boundary.position.y,
+							},
+						},
 					})
 				) {
 					console.log("colliding")
@@ -331,11 +369,56 @@ import Layout from '../layouts/Layout.astro';
 			}
 
 			if (moving)
-			movables.forEach(movable => { 
-				movable.position.x -= 3
-			})
+				movables.forEach((movable) => {
+					movable.position.x -= 3
+				})
 		}
 
+		if (
+			rectangularCollision({ rectangle1: player, rectangle2: textBoundary })
+		) {
+			if (!confettiLaunched) {
+				var scalar = 2
+				var sunflower = confetti.shapeFromText({ text: "🌻", scalar })
+
+				var defaults = {
+					spread: 360,
+					ticks: 60,
+					gravity: 0,
+					decay: 0.96,
+					startVelocity: 20,
+					shapes: [sunflower],
+					scalar,
+				}
+
+				function shoot() {
+					confetti({
+						...defaults,
+						particleCount: 30,
+					})
+
+					confetti({
+						...defaults,
+						particleCount: 5,
+						flat: true,
+					})
+
+					confetti({
+						...defaults,
+						particleCount: 15,
+						scalar: scalar / 2,
+						shapes: ["circle"],
+					})
+				}
+
+				setTimeout(shoot, 0)
+				setTimeout(shoot, 100)
+				setTimeout(shoot, 200)
+				confettiLaunched = true // Evita que se vuelva a lanzar
+			}
+		} else {
+			confettiLaunched = false // Reinicia el lanzamiento si el jugador no está en colisión
+		}
 	}
 
 	animate()
@@ -347,25 +430,25 @@ import Layout from '../layouts/Layout.astro';
 			case "w":
 				keys.w.pressed = true
 				lastKey = "w"
-				break;
+				break
 
 			case "a":
 				keys.a.pressed = true
 				lastKey = "a"
-				break;
+				break
 
 			case "s":
 				keys.s.pressed = true
 				lastKey = "s"
-				break;
+				break
 
 			case "d":
 				keys.d.pressed = true
 				lastKey = "d"
-				break;
-		
+				break
+
 			default:
-				break;
+				break
 		}
 	})
 
@@ -373,27 +456,38 @@ import Layout from '../layouts/Layout.astro';
 		switch (e.key) {
 			case "w":
 				keys.w.pressed = false
-				break;
+				break
 
 			case "a":
 				keys.a.pressed = false
-				break;
+				break
 
 			case "s":
 				keys.s.pressed = false
-				break;
+				break
 
 			case "d":
 				keys.d.pressed = false
-				break;
-		
+				break
+
 			default:
-				break;
+				break
 		}
 	})
-
 </script>
 
 <style>
-
+	.canvas-container {
+		background: rgb(97, 81, 73);
+		padding: 35px;
+		border: rgb(179, 177, 91) solid 4px;
+		box-shadow: 10px 6px 24px -8px rgba(102, 87, 64, 0.75);
+		-webkit-box-shadow: 10px 6px 24px -8px rgba(102, 87, 64, 0.75);
+		-moz-box-shadow: 10px 6px 24px -8px rgba(102, 87, 64, 0.75);
+	}
+	canvas {
+		display: inline-block;
+		border: rgb(167, 165, 84) solid 4px;
+		background: rgb(91, 255, 255);
+	}
 </style>

@@ -1,9 +1,9 @@
 ---
 interface Props {
-	title: string;
+	title: string
 }
 
-const { title } = Astro.props;
+const { title } = Astro.props
 ---
 
 <!doctype html>
@@ -21,6 +21,9 @@ const { title } = Astro.props;
 	</body>
 </html>
 <style is:global>
+	* {
+		margin: 0;
+	}
 	html {
 		font-family: system-ui, sans-serif;
 	}
@@ -37,6 +40,11 @@ const { title } = Astro.props;
 	}
 
 	body {
-		background-color: black;
+		background-color: rgb(201, 195, 162);
+		display: grid;
+		place-content: center;
+		height: 100vh;
+		position: relative;
 	}
+
 </style>

@@ -1,6 +1,8 @@
 {
-	"extends": "astro/tsconfigs/base",
-	"compilerOptions": {
-		"allowUmdGlobalAccess": false
-	}
+  "extends": "astro/tsconfigs/base",
+  "compilerOptions": {
+    "allowUmdGlobalAccess": false,
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  }
 }

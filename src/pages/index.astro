@@ -1,16 +1,21 @@
 ---
+import LoadingScreen from "../components/LoadingScreen.astro"
+import { Modal } from "../components/Modal"
 import Layout from "../layouts/Layout.astro"
 ---
 
 <Layout title="Welcome to Astro.">
 	<div class="canvas-container">
 		<canvas> </canvas>
+		<LoadingScreen />
+		<Modal client:load />
 	</div>
 </Layout>
 
 <script>
 	import { collisions } from "../utils/collisions"
 	import confetti from "canvas-confetti"
+	import { $isModalOpen } from "../store/layout"
 
 	const canvas = document.querySelector("canvas")
 	const c = canvas.getContext("2d")
@@ -94,6 +99,9 @@ import Layout from "../layouts/Layout.astro"
 
 	const foregroundTwoImage = new Image()
 	foregroundTwoImage.src = "/foreground_two.png"
+
+	const letterImage = new Image()
+	letterImage.src = "/letter.png"
 
 	interface SpriteProps {
 		position: { x: number; y: number }
@@ -209,6 +217,15 @@ import Layout from "../layouts/Layout.astro"
 		image: foregroundTwoImage,
 	})
 
+	const letter = new Sprite({
+		position: {
+			x: 2555,
+			y: -430,
+		},
+		velocity: 1,
+		image: letterImage,
+	})
+
 	const textBoundary = new Boundary({
 		position: {
 			x: 118,
@@ -216,6 +233,13 @@ import Layout from "../layouts/Layout.astro"
 		},
 		height: 162,
 		width: 384,
+	})
+
+	const letterBoundary = new Boundary({
+		position: {
+			x: 2555,
+			y: -430,
+		},
 	})
 
 	const keys = {
@@ -239,6 +263,8 @@ import Layout from "../layouts/Layout.astro"
 		foreground,
 		foregroundTwo,
 		textBoundary,
+		letter,
+		letterBoundary,
 	]
 
 	const rectangularCollision = ({ rectangle1, rectangle2 }) => {
@@ -251,6 +277,7 @@ import Layout from "../layouts/Layout.astro"
 	}
 
 	let confettiLaunched = false
+	let isLetterOpen = false
 
 	const animate = () => {
 		window.requestAnimationFrame(animate)
@@ -258,6 +285,7 @@ import Layout from "../layouts/Layout.astro"
 		boundaries.forEach((boundary) => {
 			boundary.draw()
 		})
+		letter.draw()
 		player.draw()
 		foreground.draw()
 		foregroundTwo.draw()
@@ -420,6 +448,18 @@ import Layout from "../layouts/Layout.astro"
 		} else {
 			confettiLaunched = false // Reinicia el lanzamiento si el jugador no está en colisión
 		}
+
+		if (
+			rectangularCollision({ rectangle1: player, rectangle2: letterBoundary })
+		) {
+			if (!isLetterOpen) {
+				$isModalOpen.set(true)
+				isLetterOpen = true // Evita que se vuelva a lanzar
+			}
+		} else {
+			$isModalOpen.set(false)
+			isLetterOpen = false // Reinicia el lanzamiento si el jugador no está en colisión
+		}
 	}
 
 	animate()
@@ -479,6 +519,7 @@ import Layout from "../layouts/Layout.astro"
 
 <style>
 	.canvas-container {
+		position: relative;
 		background: rgb(97, 81, 73);
 		padding: 35px;
 		border: rgb(179, 177, 91) solid 4px;
@@ -490,5 +531,7 @@ import Layout from "../layouts/Layout.astro"
 		display: inline-block;
 		border: rgb(167, 165, 84) solid 4px;
 		background: rgb(91, 255, 255);
+		width: 1024px;
+		height: 576px;
 	}
 </style>

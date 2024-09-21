@@ -11,7 +11,6 @@ import Layout from "../layouts/Layout.astro"
 <script>
 	import { collisions } from "../utils/collisions"
 	import confetti from "canvas-confetti"
-
 	const canvas = document.querySelector("canvas")
 	const c = canvas.getContext("2d")
 
@@ -75,25 +74,25 @@ import Layout from "../layouts/Layout.astro"
 	})
 
 	const image = new Image()
-	image.src = "/garden_map.png"
+	image.src = "src/assets/img/garden_map.png"
 
 	const playerDownImage = new Image()
-	playerDownImage.src = "/playerDown.png"
+	playerDownImage.src = "src/assets/img/playerDown.png"
 
 	const playerUpImage = new Image()
-	playerUpImage.src = "/playerUp.png"
+	playerUpImage.src = "src/assets/img/playerUp.png"
 
 	const playerLeftImage = new Image()
-	playerLeftImage.src = "/playerLeft.png"
+	playerLeftImage.src = "src/assets/img/playerLeft.png"
 
 	const playerRightImage = new Image()
-	playerRightImage.src = "/playerRight.png"
+	playerRightImage.src = "src/assets/img/playerRight.png"
 
 	const foregroundImage = new Image()
-	foregroundImage.src = "/forground_one.png"
+	foregroundImage.src = "src/assets/img/forground_one.png"
 
 	const foregroundTwoImage = new Image()
-	foregroundTwoImage.src = "/foreground_two.png"
+	foregroundTwoImage.src = "src/assets/img/foreground_two.png"
 
 	interface SpriteProps {
 		position: { x: number; y: number }

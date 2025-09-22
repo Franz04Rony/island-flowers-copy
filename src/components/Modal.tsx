@@ -82,14 +82,15 @@ export const Modal = () => {
 					<p
 						style={{
 							fontFamily: '"Sofadi One", system-ui',
-							fontSize: 36,
+							fontSize: 32,
 							textAlign: "center",
 							color: "#2c0d0d",
 							marginTop: 20,
 						}}
 					>
-						Eres como una flor en primavera: traes color y alegría a mi vida,
-						recordándome que siempre hay esperanza y belleza en el mundo
+						Siento que cada conversación contigo es como deshojar una margarita,
+						cada pétalo revela una capa nueva de ti que me vuelve más adicto. 
+						¿Qué pasará si termino de deshojar los pétalos? 🤔 ¡Pues descubrámoslo juntos!
 					</p>
 				</div>
 			</div>

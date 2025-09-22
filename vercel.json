@@ -2,8 +2,7 @@
   "functions": {
     "api/**/*.js": {
       "includeFiles": "**/*.html",
-      "maxDuration": 30,
-      "external": ["**/node_modules/**"]
+      "maxDuration": 30
     }
   }
 }

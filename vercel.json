@@ -1,13 +1,9 @@
 {
   "functions": {
     "api/**/*.js": {
-      "runtime": "nodejs20.x"
+      "includeFiles": "**/*.html",
+      "maxDuration": 30,
+      "external": ["**/node_modules/**"]
     }
-  },
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/api/index.js"
-    }
-  ]
+  }
 }

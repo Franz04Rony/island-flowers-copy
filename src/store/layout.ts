@@ -1,5 +1,7 @@
 import { atom } from "nanostores"
 
-const $isModalOpen = atom<boolean>(false)
+export type ModalKind = "letter" | "bridge"
 
-export { $isModalOpen }
+const $activeModal = atom<ModalKind | null>(null)
+
+export { $activeModal }

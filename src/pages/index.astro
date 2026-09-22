@@ -15,7 +15,7 @@ import Layout from "../layouts/Layout.astro"
 <script>
 	import { collisions } from "../utils/collisions"
 	import confetti from "canvas-confetti"
-	import { $isModalOpen } from "../store/layout"
+	import { $activeModal } from "../store/layout"
 
 	const canvas = document.querySelector("canvas")
 	const c = canvas.getContext("2d")
@@ -242,6 +242,15 @@ import Layout from "../layouts/Layout.astro"
 		},
 	})
 
+	const bridgeHintBoundary = new Boundary({
+		position: {
+			x: 1764,
+			y: 346,
+		},
+		width: 280,
+		height: 110,
+	})
+
 	const keys = {
 		w: {
 			pressed: false,
@@ -265,6 +274,7 @@ import Layout from "../layouts/Layout.astro"
 		textBoundary,
 		letter,
 		letterBoundary,
+		bridgeHintBoundary,
 	]
 
 	const rectangularCollision = ({ rectangle1, rectangle2 }) => {
@@ -278,6 +288,7 @@ import Layout from "../layouts/Layout.astro"
 
 	let confettiLaunched = false
 	let isLetterOpen = false
+	let isBridgeHintOpen = false
 
 	const animate = () => {
 		window.requestAnimationFrame(animate)
@@ -453,12 +464,27 @@ import Layout from "../layouts/Layout.astro"
 			rectangularCollision({ rectangle1: player, rectangle2: letterBoundary })
 		) {
 			if (!isLetterOpen) {
-				$isModalOpen.set(true)
+				$activeModal.set("letter")
 				isLetterOpen = true // Evita que se vuelva a lanzar
 			}
-		} else {
-			$isModalOpen.set(false)
+		} else if (isLetterOpen) {
+			$activeModal.set(null)
 			isLetterOpen = false // Reinicia el lanzamiento si el jugador no está en colisión
+		}
+
+		if (
+			rectangularCollision({
+				rectangle1: player,
+				rectangle2: bridgeHintBoundary,
+			})
+		) {
+			if (!isBridgeHintOpen) {
+				$activeModal.set("bridge")
+				isBridgeHintOpen = true
+			}
+		} else if (isBridgeHintOpen) {
+			$activeModal.set(null)
+			isBridgeHintOpen = false
 		}
 	}
 

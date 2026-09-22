@@ -1,10 +1,23 @@
 import { useStore } from "@nanostores/react"
-import { $isModalOpen } from "../store/layout"
+import { $activeModal } from "../store/layout"
+
+const messages = {
+	letter: {
+		title: "🌻Angela🌻",
+		text: "Siento que cada conversación contigo es como deshojar una margarita, cada pétalo revela una capa nueva de ti. ¿Qué pasará si termino de deshojar los pétalos? 🤔 ¡Pues descubrámoslo juntos!",
+		height: 400,
+	},
+	bridge: {
+		title: "🌻Angela🌻",
+		text: "Sigue por el puente, ya estás cerca",
+		height: 260,
+	},
+} as const
 
 export const Modal = () => {
-	const isModalOpen = useStore($isModalOpen)
+	const activeModal = useStore($activeModal)
+	const message = activeModal ? messages[activeModal] : messages.letter
 
-	console.log(isModalOpen)
 	return (
 		<>
 			<div
@@ -15,7 +28,7 @@ export const Modal = () => {
 					width: 1016,
 					height: 568,
 					background: "#00000065", // Fondo blanco
-					opacity: `${isModalOpen ? 1 : 0}`,
+					opacity: `${activeModal ? 1 : 0}`,
 					pointerEvents: "none",
 					transition: "opacity 0.3s ease-in-out",
 				}}
@@ -27,7 +40,7 @@ export const Modal = () => {
 						left: "50%",
 						transform: "translate(-50%, -50%)", // Para centrar horizontal y verticalmente
 						width: 600,
-						height: 400,
+						height: message.height,
 						borderRadius: "15px", // Bordes redondeados
 						boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Sombra para dar un efecto de elevación
 						padding: "28px", // Espaciado interno
@@ -41,7 +54,7 @@ export const Modal = () => {
 							top: 0,
 							left: 0,
 							width: 600,
-							height: 400,
+							height: message.height,
 							backgroundImage: "url('/sunflowers.jpg')",
 							backgroundSize: "cover",
 							opacity: 0.4,
@@ -64,7 +77,7 @@ export const Modal = () => {
 							boxShadow: "0 2px 5px rgba(0, 0, 0, 0.3)", // Sombra para efecto de elevación
 						}}
 						onClick={() => {
-							$isModalOpen.set(false)
+							$activeModal.set(null)
 						}}
 					>
 						<span
@@ -92,7 +105,7 @@ export const Modal = () => {
 							margin: "4px 0 0",
 						}}
 					>
-						🌻Angela🌻
+						{message.title}
 					</h2>
 					<div
 						style={{
@@ -114,9 +127,7 @@ export const Modal = () => {
 							marginTop: 0,
 						}}
 					>
-						Siento que cada conversación contigo es como deshojar una margarita,
-						cada pétalo revela una capa nueva de ti. 
-						¿Qué pasará si termino de deshojar los pétalos? 🤔 ¡Pues descubrámoslo juntos!
+						{message.text}
 					</p>
 				</div>
 			</div>

@@ -27,7 +27,7 @@ export const Modal = () => {
 						left: "50%",
 						transform: "translate(-50%, -50%)", // Para centrar horizontal y verticalmente
 						width: 600,
-						height: 340,
+						height: 400,
 						borderRadius: "15px", // Bordes redondeados
 						boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Sombra para dar un efecto de elevación
 						padding: "28px", // Espaciado interno
@@ -41,7 +41,7 @@ export const Modal = () => {
 							top: 0,
 							left: 0,
 							width: 600,
-							height: 340,
+							height: 400,
 							backgroundImage: "url('/sunflowers.jpg')",
 							backgroundSize: "cover",
 							opacity: 0.4,
@@ -79,17 +79,43 @@ export const Modal = () => {
 							&#10005;
 						</span>
 					</div> */}
+					<h2
+						style={{
+							fontFamily: '"Sofadi One", system-ui',
+							fontSize: 42,
+							fontWeight: 400,
+							textAlign: "center",
+							letterSpacing: "0.12em",
+							color: "#8a5a12",
+							textShadow:
+								"0 1px 0 #fff6d6, 0 2px 8px rgba(180, 120, 20, 0.35)",
+							margin: "4px 0 0",
+						}}
+					>
+						🌻Angela🌻
+					</h2>
+					<div
+						style={{
+							width: 160,
+							height: 3,
+							margin: "8px auto 14px",
+							borderRadius: 999,
+							background:
+								"linear-gradient(90deg, transparent, #e4b23a 20%, #f6de7a 50%, #e4b23a 80%, transparent)",
+							boxShadow: "0 0 10px rgba(228, 178, 58, 0.55)",
+						}}
+					/>
 					<p
 						style={{
 							fontFamily: '"Sofadi One", system-ui',
 							fontSize: 32,
 							textAlign: "center",
 							color: "#2c0d0d",
-							marginTop: 20,
+							marginTop: 0,
 						}}
 					>
 						Siento que cada conversación contigo es como deshojar una margarita,
-						cada pétalo revela una capa nueva de ti que me vuelve más adicto. 
+						cada pétalo revela una capa nueva de ti. 
 						¿Qué pasará si termino de deshojar los pétalos? 🤔 ¡Pues descubrámoslo juntos!
 					</p>
 				</div>

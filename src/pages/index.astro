@@ -242,13 +242,22 @@ import Layout from "../layouts/Layout.astro"
 		},
 	})
 
-	const bridgeHintBoundary = new Boundary({
+	const dockHintBoundary = new Boundary({
 		position: {
 			x: 1764,
 			y: 346,
 		},
 		width: 280,
 		height: 110,
+	})
+
+	const bridgeHintBoundary = new Boundary({
+		position: {
+			x: 1616,
+			y: -122,
+		},
+		width: 240,
+		height: 144,
 	})
 
 	const keys = {
@@ -274,6 +283,7 @@ import Layout from "../layouts/Layout.astro"
 		textBoundary,
 		letter,
 		letterBoundary,
+		dockHintBoundary,
 		bridgeHintBoundary,
 	]
 
@@ -287,8 +297,6 @@ import Layout from "../layouts/Layout.astro"
 	}
 
 	let confettiLaunched = false
-	let isLetterOpen = false
-	let isBridgeHintOpen = false
 
 	const animate = () => {
 		window.requestAnimationFrame(animate)
@@ -460,31 +468,26 @@ import Layout from "../layouts/Layout.astro"
 			confettiLaunched = false // Reinicia el lanzamiento si el jugador no está en colisión
 		}
 
-		if (
-			rectangularCollision({ rectangle1: player, rectangle2: letterBoundary })
-		) {
-			if (!isLetterOpen) {
-				$activeModal.set("letter")
-				isLetterOpen = true // Evita que se vuelva a lanzar
-			}
-		} else if (isLetterOpen) {
-			$activeModal.set(null)
-			isLetterOpen = false // Reinicia el lanzamiento si el jugador no está en colisión
-		}
-
-		if (
+		const hittingLetter = rectangularCollision({
+			rectangle1: player,
+			rectangle2: letterBoundary,
+		})
+		const hittingBridgeHint =
+			rectangularCollision({
+				rectangle1: player,
+				rectangle2: dockHintBoundary,
+			}) ||
 			rectangularCollision({
 				rectangle1: player,
 				rectangle2: bridgeHintBoundary,
 			})
-		) {
-			if (!isBridgeHintOpen) {
-				$activeModal.set("bridge")
-				isBridgeHintOpen = true
-			}
-		} else if (isBridgeHintOpen) {
+
+		if (hittingBridgeHint) {
+			$activeModal.set("bridge")
+		} else if (hittingLetter) {
+			$activeModal.set("letter")
+		} else {
 			$activeModal.set(null)
-			isBridgeHintOpen = false
 		}
 	}
 
